@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgis/postgis:16-master
+    container_name: petradar_db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=petradar
+    volumes:
+      - postgresdb_data:/var/lib/postgresql/data
+volumes:
+  postgresdb_data:
