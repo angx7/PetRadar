@@ -1,22 +1,5 @@
 import { FoundPet } from 'src/found-pets/found-pet.entity';
-import { LostPet } from 'src/lost-pets/lost-pet.entity';
-
-type LostPetMatch = {
-  id: number;
-  name: string;
-  species: string;
-  breed: string;
-  color: string;
-  size: string;
-  description: string;
-  photo_url: string | null;
-  owner_name: string;
-  owner_email: string;
-  owner_phone: string;
-  address: string;
-  lost_date: string;
-  distance: number | string;
-};
+import { LostPetMatch } from '../types/lost-pet-match.type';
 
 function buildStaticMapUrl(lostPet: LostPetMatch, foundPet: FoundPet, mapboxToken: string) {
   if (!mapboxToken) {
@@ -25,7 +8,7 @@ function buildStaticMapUrl(lostPet: LostPetMatch, foundPet: FoundPet, mapboxToke
 
   const [foundLng, foundLat] = foundPet.location.coordinates;
   const pointRegex = /POINT\((-?\d+(\.\d+)?) (-?\d+(\.\d+)?)\)/;
-  const lostPoint = pointRegex.exec(String((lostPet as unknown as { location?: string }).location ?? ''));
+  const lostPoint = pointRegex.exec(lostPet.location);
 
   if (!lostPoint) {
     return '';
@@ -41,7 +24,7 @@ export function generateFoundPetMatchTemplate(
   lostPet: LostPetMatch,
   foundPet: FoundPet,
   mapboxToken: string,
-) {
+): string {
   const mapUrl = buildStaticMapUrl(lostPet, foundPet, mapboxToken);
   const distance = Number(lostPet.distance).toFixed(2);
 

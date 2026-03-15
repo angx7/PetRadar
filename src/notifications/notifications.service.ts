@@ -3,23 +3,7 @@ import nodemailer from 'nodemailer';
 import { envs } from 'src/config/envs';
 import { FoundPet } from 'src/found-pets/found-pet.entity';
 import { generateFoundPetMatchTemplate } from './templates/found-pet-match.template';
-
-type LostPetMatch = {
-  id: number;
-  name: string;
-  species: string;
-  breed: string;
-  color: string;
-  size: string;
-  description: string;
-  photo_url: string | null;
-  owner_name: string;
-  owner_email: string;
-  owner_phone: string;
-  address: string;
-  lost_date: string;
-  distance: number | string;
-};
+import { LostPetMatch } from './types/lost-pet-match.type';
 
 @Injectable()
 export class NotificationsService {

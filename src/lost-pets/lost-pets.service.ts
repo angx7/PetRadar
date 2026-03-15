@@ -19,7 +19,7 @@ export class LostPetsService {
       color: createLostPetDto.color,
       size: createLostPetDto.size,
       description: createLostPetDto.description,
-      photoUrl: createLostPetDto.photoUrl,
+      photoUrl: createLostPetDto.photoUrl ?? null,
       ownerName: createLostPetDto.ownerName,
       ownerEmail: createLostPetDto.ownerEmail,
       ownerPhone: createLostPetDto.ownerPhone,
@@ -31,6 +31,7 @@ export class LostPetsService {
         coordinates: [createLostPetDto.lng, createLostPetDto.lat],
       },
     });
-    return await this.lostPetRepository.save(lostPet);
+
+    return this.lostPetRepository.save(lostPet);
   }
 }

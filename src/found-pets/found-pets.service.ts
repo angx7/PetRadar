@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FoundPet } from './found-pet.entity';
 import { Repository } from 'typeorm';
-import { CreateFoundPetDto } from 'src/lost-pets/dto/create-found-pet.dto';
+import { CreateFoundPetDto } from 'src/found-pets/dto/create-found-pet.dto';
 import { LostPet } from 'src/lost-pets/lost-pet.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { LostPetMatch } from 'src/notifications/types/lost-pet-match.type';
 
 @Injectable()
 export class FoundPetsService {
@@ -16,7 +17,7 @@ export class FoundPetsService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async create(createFoundPetDto: CreateFoundPetDto) {
+  async create(createFoundPetDto: CreateFoundPetDto): Promise<FoundPet> {
     const foundPet = this.foundPetRepository.create({
       species: createFoundPetDto.species,
       breed: createFoundPetDto.breed ?? null,
@@ -43,13 +44,10 @@ export class FoundPetsService {
 
     await this.notificationsService.sendFoundPetMatches(savedFoundPet, matches);
 
-    return {
-      foundPet: savedFoundPet,
-      matches,
-    };
+    return savedFoundPet;
   }
 
-  private async findNearbyLostPets(lat: number, lng: number) {
+  private async findNearbyLostPets(lat: number, lng: number): Promise<LostPetMatch[]> {
     return this.lostPetRepository.query(
       `
         SELECT
