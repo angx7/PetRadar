@@ -1,10 +1,61 @@
 import { Injectable, Logger } from '@nestjs/common';
+import nodemailer from 'nodemailer';
+import { envs } from 'src/config/envs';
+import { FoundPet } from 'src/found-pets/found-pet.entity';
+import { generateFoundPetMatchTemplate } from './templates/found-pet-match.template';
+
+type LostPetMatch = {
+  id: number;
+  name: string;
+  species: string;
+  breed: string;
+  color: string;
+  size: string;
+  description: string;
+  photo_url: string | null;
+  owner_name: string;
+  owner_email: string;
+  owner_phone: string;
+  address: string;
+  lost_date: string;
+  distance: number | string;
+};
 
 @Injectable()
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
+  private readonly transporter =
+    envs.MAILER_SERVICE && envs.MAILER_EMAIL && envs.MAILER_PASSWORD
+      ? nodemailer.createTransport({
+          service: envs.MAILER_SERVICE,
+          auth: {
+            user: envs.MAILER_EMAIL,
+            pass: envs.MAILER_PASSWORD,
+          },
+        })
+      : null;
 
-  notify(): void {
-    this.logger.log('Notifications service initialized.');
+  async sendFoundPetMatches(foundPet: FoundPet, matches: LostPetMatch[]): Promise<void> {
+    if (!matches.length) {
+      return;
+    }
+
+    if (!this.transporter || !envs.ALERT_EMAIL) {
+      this.logger.warn(
+        'Skipping email delivery because MAILER_SERVICE, MAILER_EMAIL, MAILER_PASSWORD or ALERT_EMAIL is missing.',
+      );
+      return;
+    }
+
+    for (const match of matches) {
+      const html = generateFoundPetMatchTemplate(match, foundPet, envs.MAPBOX_TOKEN);
+
+      await this.transporter.sendMail({
+        from: envs.MAILER_EMAIL,
+        to: envs.ALERT_EMAIL,
+        subject: `PetRadar: posible coincidencia para ${match.name}`,
+        html,
+      });
+    }
   }
 }

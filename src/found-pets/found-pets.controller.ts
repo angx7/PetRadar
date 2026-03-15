@@ -7,7 +7,7 @@ export class FoundPetsController {
   constructor(private readonly foundPetsService: FoundPetsService) {}
 
   @Post()
-  create(@Body() CreateFoundPetDto: CreateFoundPetDto) {
-    return this.foundPetsService.create(CreateFoundPetDto);
+  create(@Body() createFoundPetDto: CreateFoundPetDto) {
+    return this.foundPetsService.create(createFoundPetDto);
   }
 }

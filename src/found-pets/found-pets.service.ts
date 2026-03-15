@@ -3,15 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FoundPet } from './found-pet.entity';
 import { Repository } from 'typeorm';
 import { CreateFoundPetDto } from 'src/lost-pets/dto/create-found-pet.dto';
+import { LostPet } from 'src/lost-pets/lost-pet.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class FoundPetsService {
   constructor(
     @InjectRepository(FoundPet)
     private readonly foundPetRepository: Repository<FoundPet>,
+    @InjectRepository(LostPet)
+    private readonly lostPetRepository: Repository<LostPet>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
-  async create(createFoundPetDto: CreateFoundPetDto): Promise<FoundPet> {
+  async create(createFoundPetDto: CreateFoundPetDto) {
     const foundPet = this.foundPetRepository.create({
       species: createFoundPetDto.species,
       breed: createFoundPetDto.breed ?? null,
@@ -29,6 +34,56 @@ export class FoundPetsService {
         coordinates: [createFoundPetDto.lng, createFoundPetDto.lat],
       },
     });
-    return await this.foundPetRepository.save(foundPet);
+
+    const savedFoundPet = await this.foundPetRepository.save(foundPet);
+    const matches = await this.findNearbyLostPets(
+      createFoundPetDto.lat,
+      createFoundPetDto.lng,
+    );
+
+    await this.notificationsService.sendFoundPetMatches(savedFoundPet, matches);
+
+    return {
+      foundPet: savedFoundPet,
+      matches,
+    };
+  }
+
+  private async findNearbyLostPets(lat: number, lng: number) {
+    return this.lostPetRepository.query(
+      `
+        SELECT
+          id,
+          name,
+          species,
+          breed,
+          color,
+          size,
+          description,
+          photo_url,
+          owner_name,
+          owner_email,
+          owner_phone,
+          address,
+          lost_date,
+          is_active,
+          created_at,
+          updated_at,
+          ST_AsText(location) AS location,
+          ST_Distance(
+            location::geography,
+            ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+          ) AS distance
+        FROM lost_pets
+        WHERE is_active = true
+          AND ST_DWithin(
+            location::geography,
+            ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+            500
+          )
+        ORDER BY distance ASC;
+      `,
+      [lng, lat],
+    );
   }
 }
