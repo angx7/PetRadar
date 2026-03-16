@@ -1,39 +1,45 @@
-# PetRadar
+# PetRadar 🐾
 
-API REST desarrollada con NestJS para registrar mascotas perdidas y mascotas encontradas. Cuando se registra una mascota encontrada, el sistema busca automaticamente mascotas perdidas activas dentro de un radio de 500 metros usando PostGIS y envia una notificacion por correo con un mapa estatico de Mapbox.
+PetRadar es una API REST construida con NestJS para registrar mascotas perdidas y mascotas encontradas.  
+Cuando se registra una mascota encontrada, el sistema busca automaticamente mascotas perdidas activas dentro de un radio de **500 metros** usando **PostGIS** y dispara una **notificacion por correo** con informacion del hallazgo y un **mapa estatico de Mapbox**. 📍
 
-## Stack
+## ✨ Funcionalidades
 
-- NestJS
-- TypeORM
-- PostgreSQL + PostGIS
-- Nodemailer
-- Mapbox Static Images API
+- Registrar mascotas perdidas con `POST /api/lost-pets`
+- Registrar mascotas encontradas con `POST /api/found-pets`
+- Buscar coincidencias por proximidad usando `ST_DWithin`
+- Calcular distancia real en metros con `::geography`
+- Enviar correos HTML con template personalizado
+- Mostrar foto de la mascota en los correos
+- Incluir mapa estatico con el punto perdido y el punto encontrado
 
-## Funcionalidades
+## 🛠️ Stack
 
-- Registrar mascotas perdidas en `POST /api/lost-pets`
-- Registrar mascotas encontradas en `POST /api/found-pets`
-- Buscar mascotas perdidas activas dentro de un radio de 500 metros
-- Enviar correo a un correo generico cuando existe una coincidencia cercana
+- **NestJS**
+- **TypeORM**
+- **PostgreSQL + PostGIS**
+- **Nodemailer**
+- **Mapbox Static Images API**
+- **class-validator / class-transformer**
 
-## Estructura principal
+## 📁 Estructura del proyecto
 
 - `src/lost-pets/`: modulo de mascotas perdidas
 - `src/found-pets/`: modulo de mascotas encontradas
-- `src/notifications/`: envio de correos y templates
-- `src/database/`: configuracion de TypeORM y migraciones
+- `src/notifications/`: servicio de notificaciones, tipos y templates de correo
+- `src/database/`: data source y migraciones
 - `src/config/`: variables de entorno
 
-## Requisitos
+## 📋 Requisitos
 
-- Node.js 20+
+- Node.js 20 o superior
 - npm
-- Docker y Docker Compose
+- Docker
+- Docker Compose
 
-## Variables de entorno
+## ⚙️ Variables de entorno
 
-Crea un archivo `.env` en la raiz del proyecto.
+Crea un archivo `.env` en la raiz del proyecto:
 
 ```env
 PORT=3000
@@ -49,21 +55,23 @@ MAPBOX_TOKEN=
 ALERT_EMAIL=
 ```
 
-Descripcion rapida:
+### Descripcion de variables
 
 - `MAILER_EMAIL`: correo desde el que se enviaran las notificaciones
 - `MAILER_PASSWORD`: password o app password del proveedor
-- `MAILER_SERVICE`: proveedor de Nodemailer, por ejemplo `gmail`
-- `MAPBOX_TOKEN`: token de Mapbox para el mapa estatico
-- `ALERT_EMAIL`: correo generico que recibira las coincidencias
+- `MAILER_SERVICE`: proveedor configurado en Nodemailer, por ejemplo `gmail`
+- `MAPBOX_TOKEN`: token para generar el mapa estatico
+- `ALERT_EMAIL`: correo generico que recibira la alerta cuando no exista coincidencia cercana
 
-## Levantar base de datos
+## 🐘 Base de datos con PostGIS
+
+Levanta el contenedor:
 
 ```bash
 docker compose up -d
 ```
 
-El contenedor usa:
+Configuracion por defecto:
 
 - Host: `localhost`
 - Puerto: `5432`
@@ -71,15 +79,15 @@ El contenedor usa:
 - Usuario: `postgres`
 - Password: `postgres`
 
-## Instalacion
+## 📦 Instalacion
 
 ```bash
 npm install
 ```
 
-## Migraciones
+## 🧱 Migraciones
 
-Compilar proyecto y ejecutar CLI de TypeORM:
+Compilar el proyecto y apuntar el CLI de TypeORM:
 
 ```bash
 npm run typeorm
@@ -103,25 +111,25 @@ Revertir la ultima migracion:
 npm run migration:revert
 ```
 
-## Ejecutar la API
+## ▶️ Ejecutar la API
 
 ```bash
 npm run start:dev
 ```
 
-La API queda disponible en:
+Base URL:
 
 ```text
 http://localhost:3000/api
 ```
 
-## Endpoints
+## 🔌 Endpoints
 
 ### `POST /api/lost-pets`
 
 Registra una mascota perdida.
 
-Ejemplo de body:
+#### Ejemplo de body
 
 ```json
 {
@@ -144,9 +152,9 @@ Ejemplo de body:
 
 ### `POST /api/found-pets`
 
-Registra una mascota encontrada. Al guardar, busca automaticamente mascotas perdidas activas dentro de 500 metros y, si encuentra coincidencias, envia una notificacion por correo.
+Registra una mascota encontrada. Al guardar, busca automaticamente mascotas perdidas activas dentro de 500 metros.
 
-Ejemplo de body:
+#### Ejemplo de body
 
 ```json
 {
@@ -166,15 +174,15 @@ Ejemplo de body:
 }
 ```
 
-## Busqueda por radio
+## 📍 Busqueda por radio
 
 La funcionalidad central usa PostGIS con:
 
-- `ST_DWithin` para buscar coincidencias
+- `ST_DWithin` para encontrar mascotas perdidas activas dentro del radio
 - `ST_Distance` para ordenar por cercania
-- cast a `::geography` para trabajar en metros
+- cast a `::geography` para medir en metros
 
-Consulta base utilizada:
+### Query base
 
 ```sql
 SELECT
@@ -209,35 +217,42 @@ WHERE is_active = true
 ORDER BY distance ASC;
 ```
 
-## Notificaciones por correo
+## 📧 Notificaciones por correo
 
-Cuando una mascota encontrada coincide con una mascota perdida:
+PetRadar maneja dos escenarios:
 
-- se genera un correo HTML
-- se envia al correo definido en `ALERT_EMAIL`
+### 1. Cuando hay coincidencias cercanas 🐶
+
+- se envia correo al `owner_email` de cada mascota perdida encontrada
 - el correo incluye:
   - datos de la mascota encontrada
   - datos de contacto de quien la encontro
-  - mapa estatico de Mapbox con ambos puntos
+  - foto de la mascota encontrada
+  - mapa estatico con el punto perdido y el punto encontrado
+
+### 2. Cuando no hay coincidencias cercanas 📨
+
+- se envia una alerta generica al `ALERT_EMAIL`
+- el correo incluye:
+  - datos de la mascota encontrada
+  - datos de contacto de quien la encontro
+  - foto de la mascota encontrada
 
 Si faltan variables de correo, la API no se cae; solo registra un warning en logs y continua con la operacion.
 
-## Validacion
+## ✅ Validacion
 
-La API usa:
+La API usa validacion global con `ValidationPipe`, `class-validator` y `class-transformer`.
 
-- `class-validator`
-- `class-transformer`
-- `ValidationPipe` global
-
-Esto valida los DTOs para:
+Se valida:
 
 - strings requeridos
 - correos validos
 - fechas en formato ISO
 - coordenadas dentro de rango
+- URLs opcionales para imagenes
 
-## Scripts utiles
+## 🧪 Scripts utiles
 
 ```bash
 npm run build
@@ -249,13 +264,27 @@ npm run migration:run
 npm run migration:revert
 ```
 
-## Estado actual
+## 🚀 Estado actual
 
 Actualmente el proyecto ya cubre:
 
 - registro de mascotas perdidas
 - registro de mascotas encontradas
 - busqueda automatica por radio de 500 metros
-- notificacion por correo a correo generico
-- soporte para mapa estatico de Mapbox
+- notificacion por correo al duenio cuando hay coincidencia
+- alerta generica cuando no existe coincidencia cercana
+- templates HTML para correos
+- soporte para imagenes de mascotas en correo
+- mapa estatico de Mapbox
 
+## 💡 Flujo general
+
+1. Se registra una mascota perdida
+2. Se registra una mascota encontrada
+3. El sistema busca mascotas perdidas activas dentro de 500 metros
+4. Si encuentra coincidencias, notifica al duenio
+5. Si no encuentra coincidencias, manda alerta generica al correo configurado
+
+---
+
+Hecho con NestJS + PostGIS + Nodemailer para el proyecto **PetRadar** 🐾
