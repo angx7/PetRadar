@@ -29,46 +29,61 @@ export function generateFoundPetMatchTemplate(
   const distance = Number(lostPet.distance).toFixed(2);
 
   return `
-    <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5;">
-      <h1 style="color: #111827;">Coincidencia encontrada en PetRadar</h1>
-      <p>Se registró una mascota encontrada cerca de una mascota perdida activa.</p>
+    <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.6; max-width: 760px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #7c2d12, #dc2626); color: white; padding: 28px; border-radius: 18px 18px 0 0;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.9;">PetRadar</p>
+        <h1 style="margin: 0; font-size: 30px;">Posible coincidencia para ${lostPet.name}</h1>
+        <p style="margin: 10px 0 0 0;">Se registró una mascota encontrada cerca del punto donde reportaste la perdida.</p>
+      </div>
 
-      <h2 style="margin-top: 24px;">Mascota perdida</h2>
-      <ul>
-        <li><strong>Nombre:</strong> ${lostPet.name}</li>
-        <li><strong>Especie:</strong> ${lostPet.species}</li>
-        <li><strong>Raza:</strong> ${lostPet.breed ?? 'No especificada'}</li>
-        <li><strong>Color:</strong> ${lostPet.color}</li>
-        <li><strong>Tamano:</strong> ${lostPet.size}</li>
-        <li><strong>Direccion:</strong> ${lostPet.address}</li>
-      </ul>
+      <div style="border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 18px 18px; padding: 28px; background: #ffffff;">
+        <div style="background: #fff7ed; border: 1px solid #fdba74; padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+          <strong style="display: block; margin-bottom: 6px;">Distancia estimada</strong>
+          <span>${distance} metros entre el punto perdido y el punto encontrado.</span>
+        </div>
 
-      <h2 style="margin-top: 24px;">Mascota encontrada</h2>
-      <ul>
-        <li><strong>Especie:</strong> ${foundPet.species}</li>
-        <li><strong>Raza:</strong> ${foundPet.breed ?? 'No identificada'}</li>
-        <li><strong>Color:</strong> ${foundPet.color}</li>
-        <li><strong>Tamano:</strong> ${foundPet.size}</li>
-        <li><strong>Descripcion:</strong> ${foundPet.description}</li>
-        <li><strong>Direccion:</strong> ${foundPet.address}</li>
-        <li><strong>Distancia aproximada:</strong> ${distance} metros</li>
-      </ul>
+        <h2 style="margin-top: 0; color: #111827;">Mascota encontrada</h2>
+        ${
+          foundPet.photoUrl
+            ? `<div style="margin: 0 0 20px 0;">
+                <img src="${foundPet.photoUrl}" alt="Foto de la mascota encontrada" style="max-width: 100%; width: 100%; max-height: 320px; object-fit: cover; border-radius: 14px; border: 1px solid #e5e7eb;" />
+              </div>`
+            : ''
+        }
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr><td style="padding: 8px 0; font-weight: 700;">Especie</td><td style="padding: 8px 0;">${foundPet.species}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Raza</td><td style="padding: 8px 0;">${foundPet.breed ?? 'No identificada'}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Color</td><td style="padding: 8px 0;">${foundPet.color}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Tamano</td><td style="padding: 8px 0;">${foundPet.size}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Descripcion</td><td style="padding: 8px 0;">${foundPet.description}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Direccion</td><td style="padding: 8px 0;">${foundPet.address}</td></tr>
+        </table>
 
-      <h2 style="margin-top: 24px;">Contacto de quien la encontro</h2>
-      <ul>
-        <li><strong>Nombre:</strong> ${foundPet.finderName}</li>
-        <li><strong>Correo:</strong> ${foundPet.finderEmail}</li>
-        <li><strong>Telefono:</strong> ${foundPet.finderPhone}</li>
-      </ul>
+        <h2 style="margin-top: 28px; color: #111827;">Contacto de quien la encontro</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr><td style="padding: 8px 0; font-weight: 700;">Nombre</td><td style="padding: 8px 0;">${foundPet.finderName}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Correo</td><td style="padding: 8px 0;">${foundPet.finderEmail}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Telefono</td><td style="padding: 8px 0;">${foundPet.finderPhone}</td></tr>
+        </table>
 
-      ${
-        mapUrl
-          ? `<div style="margin-top: 24px;">
-              <h2>Mapa</h2>
-              <img src="${mapUrl}" alt="Mapa de ubicaciones" style="max-width: 100%; border-radius: 12px;" />
-            </div>`
-          : ''
-      }
+        <h2 style="margin-top: 28px; color: #111827;">Tu reporte de mascota perdida</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr><td style="padding: 8px 0; font-weight: 700;">Nombre</td><td style="padding: 8px 0;">${lostPet.name}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Especie</td><td style="padding: 8px 0;">${lostPet.species}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Raza</td><td style="padding: 8px 0;">${lostPet.breed ?? 'No especificada'}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Color</td><td style="padding: 8px 0;">${lostPet.color}</td></tr>
+          <tr><td style="padding: 8px 0; font-weight: 700;">Direccion</td><td style="padding: 8px 0;">${lostPet.address}</td></tr>
+        </table>
+
+        ${
+          mapUrl
+            ? `<div style="margin-top: 28px;">
+                <h2 style="color: #111827;">Mapa de ubicaciones</h2>
+                <img src="${mapUrl}" alt="Mapa de ubicaciones" style="max-width: 100%; border-radius: 14px; border: 1px solid #e5e7eb;" />
+              </div>`
+            : ''
+        }
+      </div>
     </div>
   `;
 }

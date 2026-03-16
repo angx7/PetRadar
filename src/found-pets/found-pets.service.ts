@@ -42,7 +42,7 @@ export class FoundPetsService {
       createFoundPetDto.lng,
     );
 
-    await this.notificationsService.sendFoundPetMatches(savedFoundPet, matches);
+    await this.notificationsService.notifyFoundPet(savedFoundPet, matches);
 
     return savedFoundPet;
   }
