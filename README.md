@@ -34,10 +34,24 @@ Cuando se registra una mascota encontrada, el sistema busca automaticamente masc
 
 - Node.js 20 o superior
 - npm
-- Docker
-- Docker Compose
+- Docker y Docker Compose
 
-## ⚙️ Variables de entorno
+## 🚀 Instalacion
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/tu-usuario/pet-radar.git
+cd pet-radar
+```
+
+### 2. Instalar dependencias
+
+```bash
+npm install
+```
+
+### 3. Configurar variables de entorno
 
 Crea un archivo `.env` en la raiz del proyecto:
 
@@ -55,73 +69,57 @@ MAPBOX_TOKEN=
 ALERT_EMAIL=
 ```
 
-### Descripcion de variables
+| Variable         | Descripcion                                                               |
+|------------------|---------------------------------------------------------------------------|
+| `MAILER_EMAIL`   | Correo desde el que se enviaran las notificaciones                        |
+| `MAILER_PASSWORD`| Password o app password del proveedor de correo                          |
+| `MAILER_SERVICE` | Proveedor configurado en Nodemailer, por ejemplo `gmail`                 |
+| `MAPBOX_TOKEN`   | Token para generar el mapa estatico de Mapbox                            |
+| `ALERT_EMAIL`    | Correo que recibira la alerta cuando no exista coincidencia cercana       |
 
-- `MAILER_EMAIL`: correo desde el que se enviaran las notificaciones
-- `MAILER_PASSWORD`: password o app password del proveedor
-- `MAILER_SERVICE`: proveedor configurado en Nodemailer, por ejemplo `gmail`
-- `MAPBOX_TOKEN`: token para generar el mapa estatico
-- `ALERT_EMAIL`: correo generico que recibira la alerta cuando no exista coincidencia cercana
-
-## 🐘 Base de datos con PostGIS
-
-Levanta el contenedor:
+### 4. Levantar la base de datos
 
 ```bash
 docker compose up -d
 ```
 
-Configuracion por defecto:
+Esto inicia un contenedor de PostgreSQL con PostGIS con la siguiente configuracion por defecto:
 
-- Host: `localhost`
-- Puerto: `5432`
-- Base de datos: `petradar`
-- Usuario: `postgres`
-- Password: `postgres`
+| Parametro     | Valor       |
+|---------------|-------------|
+| Host          | `localhost` |
+| Puerto        | `5432`      |
+| Base de datos | `petradar`  |
+| Usuario       | `postgres`  |
+| Password      | `postgres`  |
 
-## 📦 Instalacion
-
-```bash
-npm install
-```
-
-## 🧱 Migraciones
-
-Compilar el proyecto y apuntar el CLI de TypeORM:
-
-```bash
-npm run typeorm
-```
-
-Generar una migracion nueva:
-
-```bash
-npm run migration:generate -- src/database/migrations/NombreDeLaMigracion
-```
-
-Ejecutar migraciones pendientes:
+### 5. Ejecutar migraciones
 
 ```bash
 npm run migration:run
 ```
 
-Revertir la ultima migracion:
-
-```bash
-npm run migration:revert
-```
-
-## ▶️ Ejecutar la API
+### 6. Iniciar la API
 
 ```bash
 npm run start:dev
 ```
 
-Base URL:
+La API estara disponible en:
 
 ```text
 http://localhost:3000/api
 ```
+
+---
+
+## 🧱 Comandos de migraciones
+
+| Comando                                                                          | Descripcion                         |
+|----------------------------------------------------------------------------------|-------------------------------------|
+| `npm run migration:run`                                                           | Ejecuta las migraciones pendientes  |
+| `npm run migration:generate -- src/database/migrations/NombreDeLaMigracion`      | Genera una nueva migracion          |
+| `npm run migration:revert`                                                        | Revierte la ultima migracion        |
 
 ## 🔌 Endpoints
 
