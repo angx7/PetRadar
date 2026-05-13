@@ -1,6 +1,6 @@
 services:
   pet-radar:
-    image: ghcr.io/angx7/pet-radar:latest
+    image: ghcr.io/angx7/611-pet-radar:latest
     container_name: PetRadarAPI
     ports:
       - 3000:3000
