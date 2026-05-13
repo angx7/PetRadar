@@ -1,4 +1,4 @@
-import { FoundPet } from 'src/found-pets/found-pet.entity';
+import { FoundPet } from '../../found-pets/found-pet.entity';
 
 export function generateFoundPetAlertTemplate(foundPet: FoundPet): string {
   return `

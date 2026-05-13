@@ -1,14 +1,48 @@
 services:
+  pet-radar:
+    image: ghcr.io/angx7/pet-radar:latest
+    container_name: PetRadarAPI
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=${PORT}
+      - MAILER_EMAIL=${MAILER_EMAIL}
+      - MAILER_SERVICE=${MAILER_SERVICE}
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
+      - MAPBOX_TOKEN=${MAPBOX_TOKEN}
+      - ALERT_EMAIL=${ALERT_EMAIL}
+      - DB_HOST=postgres
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - APPINSIGHTS_CONNECTION_STRING=${APPINSIGHTS_CONNECTION_STRING}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+    depends_on:
+      - postgres
+      - redis
+
   postgres:
     image: postgis/postgis:16-master
-    container_name: petradar_db
+    container_name: PostgresDB
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=petradar
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
-      - postgresdb_data:/var/lib/postgresql/data
+      - postgresdb_data:/var/lib/postgresql
+
+  redis:
+    image: redis
+    container_name: pet-radar-redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_db:/data
+
 volumes:
   postgresdb_data:
+  redis_db:

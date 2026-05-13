@@ -2,8 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { envs } from './config/envs';
 import { ValidationPipe } from '@nestjs/common';
+import { initializeApplicationInsights } from './telemetry/application-insights';
 
 async function bootstrap() {
+  initializeApplicationInsights();
+
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.enableCors();

@@ -6,10 +6,14 @@ Cuando se registra una mascota encontrada, el sistema busca automaticamente masc
 ## ✨ Funcionalidades
 
 - Registrar mascotas perdidas con `POST /api/lost-pets`
+- Consultar mascotas perdidas activas con `GET /api/lost-pets` usando cache Redis
+- Consultar mascotas encontradas con `GET /api/found-pets` usando cache Redis
 - Registrar mascotas encontradas con `POST /api/found-pets`
 - Buscar coincidencias por proximidad usando `ST_DWithin`
 - Calcular distancia real en metros con `::geography`
 - Enviar correos HTML con template personalizado
+- Enviar telemetria a Azure Application Insights
+- Publicar imagen Docker en GitHub Container Registry con GitHub Actions
 - Mostrar foto de la mascota en los correos
 - Incluir mapa estatico con el punto perdido y el punto encontrado
 
@@ -18,6 +22,8 @@ Cuando se registra una mascota encontrada, el sistema busca automaticamente masc
 - **NestJS**
 - **TypeORM**
 - **PostgreSQL + PostGIS**
+- **Redis**
+- **Azure Application Insights**
 - **Nodemailer**
 - **Mapbox Static Images API**
 - **class-validator / class-transformer**
@@ -67,6 +73,12 @@ MAILER_PASSWORD=
 MAILER_SERVICE=
 MAPBOX_TOKEN=
 ALERT_EMAIL=
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_TTL_SECONDS=60
+REDIS_ENABLED=true
+APPINSIGHTS_CONNECTION_STRING=
+APPINSIGHTS_INSTRUMENTATIONKEY=
 ```
 
 | Variable         | Descripcion                                                               |
@@ -76,6 +88,12 @@ ALERT_EMAIL=
 | `MAILER_SERVICE` | Proveedor configurado en Nodemailer, por ejemplo `gmail`                 |
 | `MAPBOX_TOKEN`   | Token para generar el mapa estatico de Mapbox                            |
 | `ALERT_EMAIL`    | Correo que recibira la alerta cuando no exista coincidencia cercana       |
+| `REDIS_HOST`     | Host de Redis para cache de endpoints GET                                |
+| `REDIS_PORT`     | Puerto de Redis para cache de endpoints GET                              |
+| `REDIS_TTL_SECONDS` | Tiempo de vida del cache Redis en segundos                            |
+| `REDIS_ENABLED`  | Permite desactivar cache Redis con `false`                               |
+| `APPINSIGHTS_CONNECTION_STRING` | Connection string de Azure Application Insights           |
+| `APPINSIGHTS_INSTRUMENTATIONKEY` | Instrumentation key alternativa de Application Insights       |
 
 ### 4. Levantar la base de datos
 
@@ -83,7 +101,7 @@ ALERT_EMAIL=
 docker compose up -d
 ```
 
-Esto inicia un contenedor de PostgreSQL con PostGIS con la siguiente configuracion por defecto:
+Esto inicia contenedores de PostgreSQL con PostGIS y Redis con la siguiente configuracion por defecto:
 
 | Parametro     | Valor       |
 |---------------|-------------|
@@ -92,6 +110,12 @@ Esto inicia un contenedor de PostgreSQL con PostGIS con la siguiente configuraci
 | Base de datos | `petradar`  |
 | Usuario       | `postgres`  |
 | Password      | `postgres`  |
+
+Redis queda disponible en:
+
+```text
+redis://localhost:6379
+```
 
 ### 5. Ejecutar migraciones
 
@@ -148,6 +172,10 @@ Registra una mascota perdida.
 }
 ```
 
+### `GET /api/lost-pets`
+
+Lista las mascotas perdidas activas (`is_active = true`). La respuesta se guarda en Redis con la llave `lost-pets:active` y se invalida al crear una nueva mascota perdida.
+
 ### `POST /api/found-pets`
 
 Registra una mascota encontrada. Al guardar, busca automaticamente mascotas perdidas activas dentro de 500 metros.
@@ -171,6 +199,30 @@ Registra una mascota encontrada. Al guardar, busca automaticamente mascotas perd
   "lng": -99.1738
 }
 ```
+
+### `GET /api/found-pets`
+
+Lista las mascotas encontradas. La respuesta se guarda en Redis con la llave `found-pets:all` y se invalida al crear una nueva mascota encontrada.
+
+## 🐳 Docker y GHCR
+
+Construir la imagen local:
+
+```bash
+docker build -t pet-radar .
+```
+
+Ejecutar la API en contenedor:
+
+```bash
+docker run --rm -p 3000:3000 \
+  -e DB_HOST=host.docker.internal \
+  -e REDIS_HOST=host.docker.internal \
+  -e REDIS_PORT=6379 \
+  pet-radar
+```
+
+El workflow `.github/workflows/docker-ghcr.yml` construye y publica automaticamente en `ghcr.io/<owner>/<repo>` cuando hay push a `main` o `master`, y tambien puede ejecutarse manualmente desde GitHub Actions.
 
 ## 📍 Busqueda por radio
 

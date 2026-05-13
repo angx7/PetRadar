@@ -4,6 +4,7 @@ import { envs } from './config/envs';
 import { LostPetsModule } from './lost-pets/lost-pets.module';
 import { FoundPetsModule } from './found-pets/found-pets.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { NotificationsModule } from './notifications/notifications.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    CacheModule,
     LostPetsModule,
     FoundPetsModule,
     NotificationsModule,

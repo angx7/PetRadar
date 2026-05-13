@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateLostPetDto } from './dto/create-lost-pet.dto';
 import { LostPetsService } from './lost-pets.service';
 
@@ -6,8 +6,13 @@ import { LostPetsService } from './lost-pets.service';
 export class LostPetsController {
   constructor(private readonly lostPetsService: LostPetsService) {}
 
+  @Get()
+  findActive() {
+    return this.lostPetsService.findActive();
+  }
+
   @Post()
-  create(@Body() CreateLostPetDto: CreateLostPetDto) {
-    return this.lostPetsService.create(CreateLostPetDto);
+  create(@Body() createLostPetDto: CreateLostPetDto) {
+    return this.lostPetsService.create(createLostPetDto);
   }
 }

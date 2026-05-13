@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import nodemailer from 'nodemailer';
-import { envs } from 'src/config/envs';
-import { FoundPet } from 'src/found-pets/found-pet.entity';
+import { envs } from '../config/envs';
+import { FoundPet } from '../found-pets/found-pet.entity';
 import { generateFoundPetAlertTemplate } from './templates/found-pet-alert.template';
 import { generateFoundPetMatchTemplate } from './templates/found-pet-match.template';
 import { LostPetMatch } from './types/lost-pet-match.type';

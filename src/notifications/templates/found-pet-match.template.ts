@@ -1,4 +1,4 @@
-import { FoundPet } from 'src/found-pets/found-pet.entity';
+import { FoundPet } from '../../found-pets/found-pet.entity';
 import { LostPetMatch } from '../types/lost-pet-match.type';
 
 function buildStaticMapUrl(lostPet: LostPetMatch, foundPet: FoundPet, mapboxToken: string) {

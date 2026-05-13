@@ -1,6 +1,6 @@
-import { envs } from 'src/config/envs';
-import { LostPet } from 'src/lost-pets/lost-pet.entity';
-import { FoundPet } from 'src/found-pets/found-pet.entity';
+import { envs } from '../config/envs';
+import { LostPet } from '../lost-pets/lost-pet.entity';
+import { FoundPet } from '../found-pets/found-pet.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 export const dataSourceOptions: DataSourceOptions = {
