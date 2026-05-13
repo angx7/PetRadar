@@ -81,19 +81,19 @@ APPINSIGHTS_CONNECTION_STRING=
 APPINSIGHTS_INSTRUMENTATIONKEY=
 ```
 
-| Variable         | Descripcion                                                               |
-|------------------|---------------------------------------------------------------------------|
-| `MAILER_EMAIL`   | Correo desde el que se enviaran las notificaciones                        |
-| `MAILER_PASSWORD`| Password o app password del proveedor de correo                          |
-| `MAILER_SERVICE` | Proveedor configurado en Nodemailer, por ejemplo `gmail`                 |
-| `MAPBOX_TOKEN`   | Token para generar el mapa estatico de Mapbox                            |
-| `ALERT_EMAIL`    | Correo que recibira la alerta cuando no exista coincidencia cercana       |
-| `REDIS_HOST`     | Host de Redis para cache de endpoints GET                                |
-| `REDIS_PORT`     | Puerto de Redis para cache de endpoints GET                              |
-| `REDIS_TTL_SECONDS` | Tiempo de vida del cache Redis en segundos                            |
-| `REDIS_ENABLED`  | Permite desactivar cache Redis con `false`                               |
-| `APPINSIGHTS_CONNECTION_STRING` | Connection string de Azure Application Insights           |
-| `APPINSIGHTS_INSTRUMENTATIONKEY` | Instrumentation key alternativa de Application Insights       |
+| Variable                         | Descripcion                                                         |
+| -------------------------------- | ------------------------------------------------------------------- |
+| `MAILER_EMAIL`                   | Correo desde el que se enviaran las notificaciones                  |
+| `MAILER_PASSWORD`                | Password o app password del proveedor de correo                     |
+| `MAILER_SERVICE`                 | Proveedor configurado en Nodemailer, por ejemplo `gmail`            |
+| `MAPBOX_TOKEN`                   | Token para generar el mapa estatico de Mapbox                       |
+| `ALERT_EMAIL`                    | Correo que recibira la alerta cuando no exista coincidencia cercana |
+| `REDIS_HOST`                     | Host de Redis para cache de endpoints GET                           |
+| `REDIS_PORT`                     | Puerto de Redis para cache de endpoints GET                         |
+| `REDIS_TTL_SECONDS`              | Tiempo de vida del cache Redis en segundos                          |
+| `REDIS_ENABLED`                  | Permite desactivar cache Redis con `false`                          |
+| `APPINSIGHTS_CONNECTION_STRING`  | Connection string de Azure Application Insights                     |
+| `APPINSIGHTS_INSTRUMENTATIONKEY` | Instrumentation key alternativa de Application Insights             |
 
 ### 4. Levantar la base de datos
 
@@ -104,7 +104,7 @@ docker compose up -d
 Esto inicia contenedores de PostgreSQL con PostGIS y Redis con la siguiente configuracion por defecto:
 
 | Parametro     | Valor       |
-|---------------|-------------|
+| ------------- | ----------- |
 | Host          | `localhost` |
 | Puerto        | `5432`      |
 | Base de datos | `petradar`  |
@@ -139,11 +139,11 @@ http://localhost:3000/api
 
 ## 🧱 Comandos de migraciones
 
-| Comando                                                                          | Descripcion                         |
-|----------------------------------------------------------------------------------|-------------------------------------|
-| `npm run migration:run`                                                           | Ejecuta las migraciones pendientes  |
-| `npm run migration:generate -- src/database/migrations/NombreDeLaMigracion`      | Genera una nueva migracion          |
-| `npm run migration:revert`                                                        | Revierte la ultima migracion        |
+| Comando                                                                     | Descripcion                        |
+| --------------------------------------------------------------------------- | ---------------------------------- |
+| `npm run migration:run`                                                     | Ejecuta las migraciones pendientes |
+| `npm run migration:generate -- src/database/migrations/NombreDeLaMigracion` | Genera una nueva migracion         |
+| `npm run migration:revert`                                                  | Revierte la ultima migracion       |
 
 ## 🔌 Endpoints
 
@@ -168,7 +168,7 @@ Registra una mascota perdida.
   "address": "Condesa, Ciudad de Mexico",
   "lostDate": "2026-03-15T09:00:00.000Z",
   "lat": 19.4126,
-  "lng": -99.1740
+  "lng": -99.174
 }
 ```
 
@@ -337,4 +337,4 @@ Actualmente el proyecto ya cubre:
 
 ---
 
-Hecho con NestJS + PostGIS + Nodemailer para el proyecto **PetRadar** 🐾
+Hecho con NestJS + PostGIS + Nodemailer para el proyecto **PetRadar** 🐾 por tacoD3v
