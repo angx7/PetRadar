@@ -337,4 +337,4 @@ Actualmente el proyecto ya cubre:
 
 ---
 
-Hecho con NestJS + PostGIS + Nodemailer para el proyecto **PetRadar** 🐾 por tacoD3v
+Hecho con NestJS + PostGIS + Nodemailer para el proyecto **PetRadar** 🐾 por Alex Taco
